@@ -39,6 +39,7 @@ public class MafiaMain {
                      System.out.println(order.getPlayer()[j]);
                  start = true ;
                  System.out.println("\n"+"Ready? Set! Go.");
+                 order.Day();
              }
          }
      }
