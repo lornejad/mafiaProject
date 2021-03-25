@@ -1,5 +1,10 @@
-public class Detective extends villager {
+public class Detective extends Villager {
     private String who;
+
+    @Override
+    public String getRole() {
+        return "Detective";
+    }
 
     public Detective(String name) {
         super(name);

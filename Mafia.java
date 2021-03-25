@@ -6,6 +6,11 @@ public class Mafia extends Player {
         super(name);
     }
 
+    @Override
+    public String getRole() {
+        return "Mafia";
+    }
+
     public boolean isGod() {
         return God;
     }

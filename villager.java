@@ -1,5 +1,10 @@
-public class villager extends Player{
-    public villager(String name) {
+public class Villager extends Player{
+    public Villager(String name) {
         super(name);
+    }
+
+    @Override
+    public String getRole() {
+        return "Villager";
     }
 }

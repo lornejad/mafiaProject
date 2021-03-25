@@ -3,4 +3,9 @@ public class Joker extends Player {
         super(name);
         jocker = true ;
     }
+
+    @Override
+    public String getRole() {
+        return "Joker";
+    }
 }

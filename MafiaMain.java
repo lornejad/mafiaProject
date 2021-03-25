@@ -1,6 +1,7 @@
 import java.util.*;
 public class MafiaMain {
     private static Order order = new Order();
+    private static boolean create = false ;
     private static boolean start = false ;
     public static void main (String[] args){
      int max = 100 ;
@@ -11,20 +12,33 @@ public class MafiaMain {
          String x = n.nextLine();
          int i = sub(x,0);
          if(x.substring(0,i).equals("create_game")){
-             start = true ;
+             create = true ;
              while(i!=-1){
                  if(sub(x,i+1)!=-1)
                      name[counter_2++] = x.substring(i+1, sub(x,i+1));
                  i = sub(x,i+1);
              }
          }else if (x.substring(0,i).equals("assign_role")){
-             if(!start)
+             if(!create)
                  System.out.println("no game created");
              else{
                  if(searchPlayer(x.substring(i+1, sub(x,i+1)),name,counter_2)==-1)
                      System.out.println("user not found");
                  else
                     order.assign_role(name[searchPlayer(x.substring(i+1, sub(x,i+1)),name,counter_2)],x.substring(sub(x,i+1)+1));
+             }
+         }else if(x.substring(0,i).equals("start_game")){
+             if(order.getCounter()!=counter_2)
+                 System.out.println("one or more player do not have a role");
+             else if(!create)
+                 System.out.println("no game created");
+             else if(start)
+                 System.out.println("game has already started");
+             else {
+                 for (int j = 0; j <counter_2 ; j++)
+                     System.out.println(order.getPlayer()[j]);
+                 start = true ;
+                 System.out.println("\n"+"Ready? Set! Go.");
              }
          }
      }

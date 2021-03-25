@@ -5,6 +5,11 @@ public class Silencer extends Mafia{
         super(name);
     }
 
+    @Override
+    public String getRole() {
+        return "Silencer";
+    }
+
     public String getSilence() {
         return silence;
     }

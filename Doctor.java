@@ -1,5 +1,11 @@
-public class Doctor extends villager {
+public class Doctor extends Villager {
     private String healName;
+
+    @Override
+    public String getRole() {
+        return "Doctor" ;
+    }
+
     public Doctor(String name){
         super(name);
         wakeup = true ;

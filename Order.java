@@ -5,7 +5,7 @@ public class Order {
     public void assign_role(String name,String role){
         switch (role){
             case "Joker" : player[counter++]=new Joker(name);break;
-            case "villager" : player[counter++]=new villager(name);break;
+            case "Villager" : player[counter++]=new Villager(name);break;
             case "detective" : player[counter++]=new Detective(name);break;
             case "doctor" : player[counter++]=new Doctor(name);break;
             case "bulletproof" : player[counter++]=new BulletProof(name);break;
@@ -14,5 +14,13 @@ public class Order {
             case "silencer" : player[counter++]=new Silencer(name);break;
             default:System.out.println("role not found");
         }
+    }
+
+    public Player[] getPlayer() {
+        return player;
+    }
+
+    public int getCounter() {
+        return counter;
     }
 }
