@@ -1,5 +1,9 @@
-public class Detective extends Citizenry {
+public class Detective extends villager {
     private String who;
+
+    public Detective(String name) {
+        super(name);
+    }
 
     public String getWho() {
         return who;

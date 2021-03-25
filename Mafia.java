@@ -2,6 +2,10 @@ public class Mafia extends Player {
     protected String whoDie;
     protected boolean God = false ;
 
+    public Mafia(String name) {
+        super(name);
+    }
+
     public boolean isGod() {
         return God;
     }

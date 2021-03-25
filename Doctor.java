@@ -1,6 +1,7 @@
-public class Doctor extends Citizenry {
+public class Doctor extends villager {
     private String healName;
-    public Doctor(){
+    public Doctor(String name){
+        super(name);
         wakeup = true ;
     }
     public void setHealName(String healName) {

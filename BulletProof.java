@@ -1,5 +1,9 @@
-public class BulletProof extends Citizenry {
+public class BulletProof extends villager {
     private boolean die = false ;
+
+    public BulletProof(String name) {
+        super(name);
+    }
 
     public boolean isDie() {
         return die;
