@@ -6,6 +6,10 @@ abstract class Player {
     protected boolean wakeup = false;
     protected boolean alive = true ;
 
+    public boolean isWakeup() {
+        return wakeup;
+    }
+
     public boolean isSilence() {
         return silence;
     }

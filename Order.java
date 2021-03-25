@@ -1,10 +1,12 @@
 import java.util.*;
 public class Order {
+    boolean end_game = false;
     Scanner n = new Scanner(System.in);
     int max = 100 ;
     Player[] player = new Player[max];
     int counter = 0;
     int dayCounter = 1;
+    int nightCounter = 1;
     public void assign_role(String name,String role){
         switch (role){
             case "Joker" : player[counter++]=new Joker(name);break;
@@ -49,11 +51,27 @@ public class Order {
             }
         }
         if(die) {
-            if (max_player(0).getRole().equals("Joker"))
+            if (max_player(0).getRole().equals("Joker")){
                 System.out.println("Joker won!");
-            else
+                end_game = true;
+            }
+            else{
                 System.out.println(max_player(0).getName() + " died");
-        }   }
+                max_player(0).setAlive(false);
+            }
+
+        }
+        if(!end_game)
+            night();
+    }
+
+    public void night(){
+        System.out.println("night " + nightCounter++);
+        for (int i = 0; i <counter ; i++) {
+            if(player[i].isWakeup())
+                System.out.println(player[i]);
+        }
+    }
 
     public Player max_player(int h){
         Player max_player = player[h];
