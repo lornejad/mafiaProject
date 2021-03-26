@@ -4,7 +4,7 @@ public class Joker extends Player {
         jocker = true ;
         wakeup = true ;
     }
-
+    public void set(){}
     @Override
     public String getRole() {
         return "Joker";

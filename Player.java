@@ -37,8 +37,8 @@ abstract class Player {
         return vote_Count;
     }
 
-    public void setVote_Count(int vote_Count) {
-        this.vote_Count = vote_Count;
+    public void resetVote_Count() {
+        this.vote_Count = 0;
     }
 
     public abstract String getRole();

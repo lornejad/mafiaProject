@@ -1,4 +1,4 @@
-public class Mafia extends Player {
+public class Mafia extends Player{
     protected String whoDie;
     protected boolean God = false ;
 
@@ -6,6 +6,7 @@ public class Mafia extends Player {
         super(name);
         wakeup = true ;
     }
+    public void set(){}
 
     @Override
     public String getRole() {

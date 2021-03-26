@@ -8,6 +8,7 @@ public class Detective extends Villager {
 
     public Detective(String name) {
         super(name);
+        wakeup = true;
     }
 
     public String getWho() {
