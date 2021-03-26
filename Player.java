@@ -14,6 +14,14 @@ abstract class Player {
         return silence;
     }
 
+    public void setSilence() {
+        this.silence = true;
+    }
+
+    public void resetSilence(){
+        this.silence = false;
+    }
+
     public Player(String name) {
         this.name = name;
     }

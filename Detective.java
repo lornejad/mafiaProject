@@ -1,5 +1,16 @@
 public class Detective extends Villager {
     private String who;
+    private boolean detect = false;
+
+    public boolean isDetect() {
+        return detect;
+    }
+
+    public void Detect() {
+        detect = true;
+    }
+
+    public void resetDetect(){detect = false;}
 
     @Override
     public String getRole() {

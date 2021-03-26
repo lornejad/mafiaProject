@@ -12,7 +12,7 @@ public class Silencer extends Mafia{
         return do_silence;
     }
 
-    public void end_night(){do_silence=false;}
+    public void end_Day(){do_silence=false;}
 
     @Override
     public String getRole() {

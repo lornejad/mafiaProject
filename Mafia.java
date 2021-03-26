@@ -6,8 +6,8 @@ public class Mafia extends Player{
         super(name);
         wakeup = true ;
     }
-    public void set(){}
 
+    public void resetWhoDie(){whoDie = null;}
     @Override
     public String getRole() {
         return "Mafia";
