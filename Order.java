@@ -1,5 +1,6 @@
 import jdk.nashorn.internal.scripts.JO;
 
+import java.math.BigInteger;
 import java.util.*;
 public class Order {
     boolean end_game = false;
@@ -35,18 +36,22 @@ public class Order {
         while(!vote.equals("end_vote")) {
             if(vote.equals("get_game_state"))
                 get_game_state();
-            String votee = vote.substring(sub(vote, 0) + 1);
-            String voter = vote.substring(0, sub(vote, 0));
-            if (!(debug(votee) && debug(voter)))
-                System.out.println("user not found");
-            else if (searchPlayer(voter).isSilence())
-                System.out.println("voter is silenced");
-            else if (!searchPlayer(votee).isAlive())
-                System.out.println("votee already dead");
-            else if (!searchPlayer(voter).isAlive())
-                System.out.println("voter dead");
-            else
-                searchPlayer(vote.substring(sub(vote, 0) + 1)).increase_vote_Count();
+            else if(vote.equals("swap_character"))
+                System.out.println("voting in progress");
+            else{
+                String votee = vote.substring(sub(vote, 0) + 1);
+                String voter = vote.substring(0, sub(vote, 0));
+                if (!(debug(votee) && debug(voter)))
+                    System.out.println("user not found");
+                else if (searchPlayer(voter).isSilence())
+                    System.out.println("voter is silenced");
+                else if (!searchPlayer(votee).isAlive())
+                    System.out.println("votee already dead");
+                else if (!searchPlayer(voter).isAlive())
+                    System.out.println("voter dead");
+                else
+                    searchPlayer(vote.substring(sub(vote, 0) + 1)).increase_vote_Count();
+            }
             vote = n.nextLine();
         }
         Player x = max_player(0);
@@ -93,6 +98,8 @@ public class Order {
         while(!vote.equals("end_night")) {
             if(vote.equals("get_game_state"))
                 get_game_state();
+            else if(vote.equals("swap_character"))
+                System.out.println("can’t swap before end of night");
             else{
                 String second = vote.substring(sub(vote, 0) + 1);
                 String first = vote.substring(0, sub(vote, 0));
@@ -167,13 +174,49 @@ public class Order {
             }
         }
         cal_state();
+        //swap start
+        String swap = n.nextLine();
+        String a = swap.substring(15,sub(swap,15));
+        String b = swap.substring(sub(swap,15)+1);
+        boolean q=false,w=false;
+        if(!(searchPlayer(a).isAlive()&&searchPlayer(b).isAlive()))
+            System.out.println("user is dead");
+        else{
+            if(searchPlayer(a).isSilence())
+                q = true;
+            if(searchPlayer(b).isSilence())
+                w = true;
+            assign_role(a,searchPlayer(b).getRole());
+            assign_role(b,searchPlayer(a).getRole());
+            removePlayer(a);
+            removePlayer(b);
+            if(q)
+                searchPlayer(b).setSilence();
+            if(w)
+                searchPlayer(a).setSilence();
+        }
+        //swap finish
         System.out.println("Day " + dayCounter++);
         for (int i = 0; i <counter_kill ; i++) {
             if(kill[i].getVote_Count()>0)
                 System.out.println("mafia tried to kill "+kill[i]);
         }
-        if(die)
-            System.out.println(kill[whokill]+" was killed");
+        Player g = kill[whokill];
+        if(die){
+            if(g instanceof BulletProof){
+                if(!((BulletProof) g).isDie()){
+                    System.out.println(kill[whokill]+" was killed");
+                    searchPlayer(kill[whokill].getName()).setAlive(false);
+                }
+                else{
+                    if(searchPlayer(g.getName()) instanceof BulletProof)
+                        ((BulletProof) searchPlayer(g.getName())).setDie();
+                }
+            }else{
+                System.out.println(kill[whokill]+" was killed");
+                searchPlayer(kill[whokill].getName()).setAlive(false);
+            }
+        }
         else
             System.out.println("nobody kill");
         System.out.println("Silenced "+silence);
@@ -186,6 +229,17 @@ public class Order {
                 ((Detective) x).resetDetect();
         }
         Day();
+    }
+
+    public void removePlayer(String name){
+        for (int i = 0; i <counter ; i++) {
+            if(player[i].getName().equals(name)){
+                for (int j = i+1; j <counter ; j++) {
+                    player[j-1]=player[j];
+                }
+                break;
+            }
+        }
     }
 
     public Player max_player(int h){

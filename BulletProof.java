@@ -14,7 +14,7 @@ public class BulletProof extends Villager {
         return die;
     }
 
-    public void setDie(boolean die) {
-        this.die = die;
+    public void setDie() {
+        this.die = true;
     }
 }
