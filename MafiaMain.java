@@ -3,6 +3,8 @@ public class MafiaMain {
     private static Order order = new Order();
     private static boolean create = false ;
     private static boolean start = false ;
+    private static boolean startDay = false;
+    private static boolean startNight = false;
     public static void main (String[] args){
      int max = 100 ;
      String[] name = new String[max];
@@ -39,9 +41,22 @@ public class MafiaMain {
                      System.out.println(order.getPlayer()[j]);
                  start = true ;
                  System.out.println("\n"+"Ready? Set! Go.");
-                 order.Day();
+                 startDay = true;
+                 order.cal_state();
+                 System.out.println("Day 1");
              }
-         }
+         }else if (x.equals("end_vote")){
+             startDay = false;
+             startNight = true;
+             order.Day_result();
+         }else if (x.equals("end_night")){
+             startDay = true;
+             startNight = false;
+             order.Night_result();
+         }else if(startDay)
+             order.Day(x);
+         else if(startNight)
+             order.night(x);
      }
     }
     public static int searchPlayer(String x,String[] name,int counter_2){

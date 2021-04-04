@@ -8,8 +8,10 @@ public class Order {
     int max = 100 ;
     Player[] player = new Player[max];
     int counter = 0;
-    int dayCounter = 1;
+    int dayCounter = 2;
     int nightCounter = 1;
+    private String heal ="";
+    private String silence ="";
     public void assign_role(String name,String role){
         switch (role){
             case "Joker" : player[counter++]=new Joker(name);break;
@@ -28,32 +30,7 @@ public class Order {
         return player;
     }
 
-    public void Day(){
-        cal_state();
-        if(dayCounter==1)
-            System.out.println("Day " + dayCounter++);
-        String vote = n.nextLine();
-        while(!vote.equals("end_vote")) {
-            if(vote.equals("get_game_state"))
-                get_game_state();
-            else if(vote.equals("swap_character"))
-                System.out.println("voting in progress");
-            else{
-                String votee = vote.substring(sub(vote, 0) + 1);
-                String voter = vote.substring(0, sub(vote, 0));
-                if (!(debug(votee) && debug(voter)))
-                    System.out.println("user not found");
-                else if (searchPlayer(voter).isSilence())
-                    System.out.println("voter is silenced");
-                else if (!searchPlayer(votee).isAlive())
-                    System.out.println("votee already dead");
-                else if (!searchPlayer(voter).isAlive())
-                    System.out.println("voter dead");
-                else
-                    searchPlayer(vote.substring(sub(vote, 0) + 1)).increase_vote_Count();
-            }
-            vote = n.nextLine();
-        }
+    public void Day_result(){
         Player x = max_player(0);
         boolean die = true ;
         for (int i = 1; i <counter ; i++) {
@@ -81,21 +58,121 @@ public class Order {
             if(a instanceof Silencer)
                 ((Silencer) a).end_Day();
         }
-
-        if(!end_game)
-            night();
-    }
-
-    public void night(){
         cal_state();
-        System.out.println("night " + nightCounter++);
-        String heal ="";
-        String silence ="";
+        System.out.println("Night"+nightCounter++);
         for (int i = 0; i <counter ; i++)
             if(player[i].isWakeup() && player[i].isAlive())
                 System.out.println(player[i]);
-        String vote = n.nextLine();
-        while(!vote.equals("end_night")) {
+    }
+
+    public void Day(String vote){
+        cal_state();
+        if(vote.equals("get_game_state"))
+            get_game_state();
+        else if(vote.equals("swap_character"))
+            System.out.println("voting in progress");
+        else{
+            String votee = vote.substring(sub(vote, 0) + 1);
+            String voter = vote.substring(0, sub(vote, 0));
+            if (!(debug(votee) && debug(voter)))
+                System.out.println("user not found");
+            else if (searchPlayer(voter).isSilence())
+                System.out.println("voter is silenced");
+            else if (!searchPlayer(votee).isAlive())
+                System.out.println("votee already dead");
+            else if (!searchPlayer(voter).isAlive())
+                System.out.println("voter dead");
+            else
+                searchPlayer(vote.substring(sub(vote, 0) + 1)).increase_vote_Count();
+        }
+    }
+
+    public void Night_result(){
+        boolean die = false ;
+        int whokill = -1 ;
+        for (int i = 0; i <counter ; i++) {
+            Player x =player[i];
+            if(x instanceof Mafia && x.isAlive() && ((Mafia) x).isNight_vote())
+                searchPlayer(((Mafia) x).getWhoDie()).increase_vote_Count();
+        }
+        Player[] kill = new Player[max];
+        int counter_kill = 0;
+        kill[counter_kill++] = max_player(0);
+        for (int i = 1; i <counter ; i++) {
+            if(!kill[0].getName().equals(max_player(i).getName()))
+                kill[counter_kill++]=max_player(i);
+        }
+        if(counter_kill==2){
+            for (int i = 0; i <counter_kill ; i++)
+                if(kill[i].getName().equals(heal)){
+                    whokill = 1-i;
+                    die = true ;
+                }
+        }else if (counter_kill==1){
+            if(!kill[0].getName().equals(heal)){
+                die  = true;
+                whokill = 0;
+            }
+        }
+        cal_state();
+        /*swap start
+        String swap = n.nextLine();
+        String a = swap.substring(15,sub(swap,15));
+        String b = swap.substring(sub(swap,15)+1);
+        boolean q=false,w=false;
+        if(!(searchPlayer(a).isAlive()&&searchPlayer(b).isAlive()))
+            System.out.println("user is dead");
+        else{
+            if(searchPlayer(a).isSilence())
+                q = true;
+            if(searchPlayer(b).isSilence())
+                w = true;
+            assign_role(a,searchPlayer(b).getRole());
+            assign_role(b,searchPlayer(a).getRole());
+            removePlayer(a);
+            removePlayer(b);
+            if(q)
+                searchPlayer(b).setSilence();
+            if(w)
+                searchPlayer(a).setSilence();
+        }
+        swap finish*/
+        System.out.println("Day " + dayCounter++);
+        for (int i = 0; i <counter_kill ; i++) {
+            if(kill[i].getVote_Count()>0)
+                System.out.println("mafia tried to kill "+kill[i]);
+        }
+        if(die){
+            Player g = kill[whokill];
+            if(g instanceof BulletProof){
+                if(((BulletProof) g).isDie()){
+                    System.out.println(kill[whokill]+" was killed");
+                    searchPlayer(kill[whokill].getName()).setAlive(false);
+                }else{
+                    if(searchPlayer(g.getName()) instanceof BulletProof)
+                        ((BulletProof) searchPlayer(g.getName())).setDie();
+                }
+            }else{
+                System.out.println(kill[whokill]+" was killed");
+                searchPlayer(kill[whokill].getName()).setAlive(false);
+            }
+        }
+        else
+            System.out.println("nobody kill");
+        System.out.println("Silenced "+silence);
+        for (int i = 0; i <counter ; i++){
+            player[i].resetVote_Count();
+            Player x = player[i];
+            if(x instanceof Mafia)
+                ((Mafia) x).resetWhoDie();
+            if(x instanceof Detective)
+                ((Detective) x).resetDetect();
+        }
+        cal_state();
+    }
+
+    public void night(String vote){
+        cal_state();
             if(vote.equals("get_game_state"))
                 get_game_state();
             else if(vote.equals("swap_character"))
@@ -118,8 +195,10 @@ public class Order {
                             ((Silencer) searchPlayer(first)).setSilence(second);
                             searchPlayer(second).setSilence();
                             silence = second ;
-                        }else
+                        }else{
                             ((Mafia) searchPlayer(first)).setWhoDie(second);
+                            ((Mafia) searchPlayer(first)).setNight_vote();
+                        }
                     }else if (searchPlayer(first) instanceof Doctor){
                         ((Doctor) searchPlayer(first)).setHealName(second);
                         heal  = second ;
@@ -144,91 +223,6 @@ public class Order {
                     }
                 }
             }
-            vote = n.nextLine();
-        }
-        //pardazesh
-        boolean die = false ;
-        int whokill = -1 ;
-        for (int i = 0; i <counter ; i++) {
-            Player x =player[i];
-            if(x instanceof Mafia && x.isAlive())
-                searchPlayer(((Mafia) x).getWhoDie()).increase_vote_Count();
-        }
-        Player[] kill = new Player[max];
-        int counter_kill = 0;
-        kill[counter_kill++] = max_player(0);
-        for (int i = 1; i <counter ; i++) {
-            if(!kill[0].getName().equals(max_player(i).getName()))
-                kill[counter_kill++]=max_player(i);
-        }
-        if(counter_kill==2){
-            for (int i = 0; i <counter_kill ; i++)
-                if(kill[i].getName().equals(heal)){
-                    whokill = 1-i;
-                    die = true ;
-                }
-        }else if (counter_kill==1){
-            if(!kill[0].getName().equals(heal)){
-                die  = true;
-                whokill = 0;
-            }
-        }
-        cal_state();
-        //swap start
-        String swap = n.nextLine();
-        String a = swap.substring(15,sub(swap,15));
-        String b = swap.substring(sub(swap,15)+1);
-        boolean q=false,w=false;
-        if(!(searchPlayer(a).isAlive()&&searchPlayer(b).isAlive()))
-            System.out.println("user is dead");
-        else{
-            if(searchPlayer(a).isSilence())
-                q = true;
-            if(searchPlayer(b).isSilence())
-                w = true;
-            assign_role(a,searchPlayer(b).getRole());
-            assign_role(b,searchPlayer(a).getRole());
-            removePlayer(a);
-            removePlayer(b);
-            if(q)
-                searchPlayer(b).setSilence();
-            if(w)
-                searchPlayer(a).setSilence();
-        }
-        //swap finish
-        System.out.println("Day " + dayCounter++);
-        for (int i = 0; i <counter_kill ; i++) {
-            if(kill[i].getVote_Count()>0)
-                System.out.println("mafia tried to kill "+kill[i]);
-        }
-        Player g = kill[whokill];
-        if(die){
-            if(g instanceof BulletProof){
-                if(!((BulletProof) g).isDie()){
-                    System.out.println(kill[whokill]+" was killed");
-                    searchPlayer(kill[whokill].getName()).setAlive(false);
-                }
-                else{
-                    if(searchPlayer(g.getName()) instanceof BulletProof)
-                        ((BulletProof) searchPlayer(g.getName())).setDie();
-                }
-            }else{
-                System.out.println(kill[whokill]+" was killed");
-                searchPlayer(kill[whokill].getName()).setAlive(false);
-            }
-        }
-        else
-            System.out.println("nobody kill");
-        System.out.println("Silenced "+silence);
-        for (int i = 0; i <counter ; i++){
-            player[i].resetVote_Count();
-            Player x = player[i];
-            if(x instanceof Mafia)
-                ((Mafia) x).resetWhoDie();
-            if(x instanceof Detective)
-                ((Detective) x).resetDetect();
-        }
-        Day();
     }
 
     public void removePlayer(String name){
